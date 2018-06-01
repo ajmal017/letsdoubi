@@ -28,3 +28,13 @@ Lifecycle：
 3. 股价与分析结果之间的关系
 	3.1 是否存在正相关
 	3.2 如何确定消息对股价浮动和市场的影响
+
+
+0.1.0版本实现的内容：
+1. 使用twitter api 下载twitter数据。
+2. 将下载的twitter数据存入mysql去重复
+
+TODO list:
+Docker
+tornado
+TensorFlow
