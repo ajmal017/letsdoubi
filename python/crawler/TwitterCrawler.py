@@ -13,6 +13,8 @@ from datetime import datetime
 import configparser
 import logging
 import logging.config
+from datetime import datetime, timezone
+import pytz
 
 # Get configuration from setting.ini file
 configParser = configparser.ConfigParser()   
@@ -71,7 +73,8 @@ for status in limit_handled(tweepy.Cursor(api.search,
                             include_entities=True,
                             lang="en").items(10)):
     try:
-        tweet= (status.id, status.text.strip(), status.user.followers_count, status.favorite_count, status.retweet_count, status.created_at)
+        created_at_eastern=status.created_at.replace(tzinfo=timezone.utc).astimezone(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d %H:%M:%S')
+        tweet= (status.id, status.text.strip(), status.user.followers_count, status.favorite_count, status.retweet_count, created_at_eastern)
         cur.execute(add_tweet,tweet)
         cnx.commit()
     except Exception as e:
