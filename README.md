@@ -28,3 +28,58 @@ Lifecycle：
 3. 股价与分析结果之间的关系
 	3.1 是否存在正相关
 	3.2 如何确定消息对股价浮动和市场的影响
+
+
+0.1.0版本实现的内容：
+1. 使用twitter api 下载twitter数据。
+2. 将下载的twitter数据存入mysql去重复
+
+TODO list:
+Docker
+tornado
+TensorFlow
+
+
+
+
+Jun/5th:
+Sam:
+1. Create new table: Demo to Twitter**
+2. New mysql table. Twitter_analyze_info 
+(
+year+month,
+day,
+hr,
+15min(4 quarters),
+median,
+mean,
+weighted_median,
+weighted_mean,
+count,
+0_count
+)
+
+2018-06,05,09,1,mean...
+2018-06,05,09,2,mean...
+2018-06,05,09,3,mean...
+2018-06,05,09,4,mean...
+2018-06,05,10,1,mean...
+2018-06,05,10,2,mean...
+2018-06,05,10,3,mean...
+2018-06,05,10,4,mean...
+
+>0 下一个15分钟涨 准确率
+
+(close+open+high+low)/4
+
+
+
+
+Kev:
+1. 股价15分钟api
+
+2. 股票价格存入数据库，建一张表
+
+3. 显示15分钟图
+
+Jun/7th
