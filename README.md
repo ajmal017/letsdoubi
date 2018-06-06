@@ -38,3 +38,48 @@ TODO list:
 Docker
 tornado
 TensorFlow
+
+
+
+
+Jun/5th:
+Sam:
+1. Create new table: Demo to Twitter**
+2. New mysql table. Twitter_analyze_info 
+(
+year+month,
+day,
+hr,
+15min(4 quarters),
+median,
+mean,
+weighted_median,
+weighted_mean,
+count,
+0_count
+)
+
+2018-06,05,09,1,mean...
+2018-06,05,09,2,mean...
+2018-06,05,09,3,mean...
+2018-06,05,09,4,mean...
+2018-06,05,10,1,mean...
+2018-06,05,10,2,mean...
+2018-06,05,10,3,mean...
+2018-06,05,10,4,mean...
+
+>0 下一个15分钟涨 准确率
+
+(close+open+high+low)/4
+
+
+
+
+Kev:
+1. 股价15分钟api
+
+2. 股票价格存入数据库，建一张表
+
+3. 显示15分钟图
+
+Jun/7th
