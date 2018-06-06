@@ -9,26 +9,24 @@ import sys
 sys.path.append('../lib') 
 import common_functions
 import mysql_connection
+import config_parser
 from datetime import datetime
-import configparser
 import logging
 import logging.config
 from datetime import datetime, timezone
 import pytz
 
-# Get configuration from setting.ini file
-configParser = configparser.ConfigParser()   
-configFilePath = r'../conf/setting.ini'
-configParser.read(configFilePath)
-consumer_key=configParser.get('TWITTERAPI', 'consumer_key')
-consumer_secret=configParser.get('TWITTERAPI', 'consumer_secret')
-access_token=configParser.get('TWITTERAPI', 'access_token')
-access_token_secret=configParser.get('TWITTERAPI', 'access_token_secret')
-logging_directory=configParser.get('DEFAULT', 'logging_directory')
-mysql_user=configParser.get('MYSQL', 'user')
-mysql_password=configParser.get('MYSQL', 'password')
-mysql_host=configParser.get('MYSQL', 'host')
-mysql_database=configParser.get('MYSQL', 'database')
+# Get configuration from configparser
+cfparser=config_parser.get_settings()
+consumer_key=cfparser.get('TWITTERAPI', 'consumer_key')
+consumer_secret=cfparser.get('TWITTERAPI', 'consumer_secret')
+access_token=cfparser.get('TWITTERAPI', 'access_token')
+access_token_secret=cfparser.get('TWITTERAPI', 'access_token_secret')
+logging_directory=cfparser.get('DEFAULT', 'logging_directory')
+mysql_user=cfparser.get('MYSQL', 'user')
+mysql_password=cfparser.get('MYSQL', 'password')
+mysql_host=cfparser.get('MYSQL', 'host')
+mysql_database=cfparser.get('MYSQL', 'database')
 
 # Get logging setting
 logging.config.fileConfig(logging_directory)
