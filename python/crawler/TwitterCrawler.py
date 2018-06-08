@@ -7,12 +7,12 @@ import tweepy
 import time
 import common_functions
 from datetime import datetime
-import configparser
 import logging
 import logging.config
 from datetime import datetime, timezone
 import pytz
 import DBManager
+
 # Get configuration from setting.ini file
 configParser = configparser.ConfigParser()
 configFilePath = r'../conf/setting.ini'
@@ -23,6 +23,7 @@ access_token=configParser.get('TWITTERAPI', 'access_token')
 access_token_secret=configParser.get('TWITTERAPI', 'access_token_secret')
 
 logging_directory=configParser.get('DEFAULT', 'logging_directory')
+
 
 # Get logging setting
 logging.config.fileConfig(logging_directory)
