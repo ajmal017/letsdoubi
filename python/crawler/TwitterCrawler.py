@@ -1,34 +1,28 @@
 #!/usr/bin/env python
 __author__ = "Kevin & Samuel"
 __version__ = "0.1.0"
-
+import sys
+sys.path.append('../lib')
 import tweepy
 import time
-import mysql.connector
-import sys
-sys.path.append('../lib') 
 import common_functions
-import mysql_connection
 from datetime import datetime
 import configparser
 import logging
 import logging.config
 from datetime import datetime, timezone
 import pytz
-
+import DBManager
 # Get configuration from setting.ini file
-configParser = configparser.ConfigParser()   
+configParser = configparser.ConfigParser()
 configFilePath = r'../conf/setting.ini'
 configParser.read(configFilePath)
 consumer_key=configParser.get('TWITTERAPI', 'consumer_key')
 consumer_secret=configParser.get('TWITTERAPI', 'consumer_secret')
 access_token=configParser.get('TWITTERAPI', 'access_token')
 access_token_secret=configParser.get('TWITTERAPI', 'access_token_secret')
+
 logging_directory=configParser.get('DEFAULT', 'logging_directory')
-mysql_user=configParser.get('MYSQL', 'user')
-mysql_password=configParser.get('MYSQL', 'password')
-mysql_host=configParser.get('MYSQL', 'host')
-mysql_database=configParser.get('MYSQL', 'database')
 
 # Get logging setting
 logging.config.fileConfig(logging_directory)
@@ -61,17 +55,18 @@ def limit_handled(cursor):
             logger.info(str(e))
             raise
 
-# get mysql connection
-cnx = mysql_connection.get_connect(mysql_user,mysql_password,mysql_host,mysql_database)
-cur = mysql_connection.get_cursor(cnx)
-
+dbClient=DBManager.DBManager()
+cur = dbClient.get_cursor()
+cnx=dbClient.get_connect()
+max_db_id=dbClient.get_max_id()
 # TODO move all sql into lib functions
 add_tweet = ("INSERT INTO doubi.Demo(id, text, followers_count, favorite_count, retweet_count,created_at) VALUES (%s, %s, %s, %s, %s, %s)")
 logger.info("Starting dump into mysql")
 for status in limit_handled(tweepy.Cursor(api.search,
-                            q='gtx 1070',
+                            q='Tesla',
                             include_entities=True,
-                            lang="en").items(10)):
+                            since_id=max_db_id,
+                            lang="en").items()):
     try:
         created_at_eastern=status.created_at.replace(tzinfo=timezone.utc).astimezone(pytz.timezone('US/Eastern')).strftime('%Y-%m-%d %H:%M:%S')
         tweet= (status.id, status.text.strip(), status.user.followers_count, status.favorite_count, status.retweet_count, created_at_eastern)
@@ -80,7 +75,5 @@ for status in limit_handled(tweepy.Cursor(api.search,
     except Exception as e:
         logger.info(str(e))
 
-cnx.close()
+dbClient.close()
 print("Crawler Done")
-
-
