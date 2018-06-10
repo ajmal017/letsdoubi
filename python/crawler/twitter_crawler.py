@@ -1,28 +1,30 @@
 #!/usr/bin/env python
+
 __author__ = "Kevin & Samuel"
 __version__ = "0.1.0"
+
 import sys
-sys.path.append('../lib')
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import tweepy
 import time
-import common_functions
+from util_libs import common_functions
 from datetime import datetime
 import logging
 import logging.config
 from datetime import datetime, timezone
 import pytz
-import DBManager
+from util_libs import db_manager
+from util_libs import config_parser
 
 # Get configuration from setting.ini file
-configParser = configparser.ConfigParser()
-configFilePath = r'../conf/setting.ini'
-configParser.read(configFilePath)
-consumer_key=configParser.get('TWITTERAPI', 'consumer_key')
-consumer_secret=configParser.get('TWITTERAPI', 'consumer_secret')
-access_token=configParser.get('TWITTERAPI', 'access_token')
-access_token_secret=configParser.get('TWITTERAPI', 'access_token_secret')
+cf_parser=config_parser.get_settings()
+consumer_key=cf_parser.get('TWITTERAPI', 'consumer_key')
+consumer_secret=cf_parser.get('TWITTERAPI', 'consumer_secret')
+access_token=cf_parser.get('TWITTERAPI', 'access_token')
+access_token_secret=cf_parser.get('TWITTERAPI', 'access_token_secret')
 
-logging_directory=configParser.get('DEFAULT', 'logging_directory')
+logging_directory=cf_parser.get('DEFAULT', 'logging_directory')
 
 
 # Get logging setting
@@ -56,10 +58,10 @@ def limit_handled(cursor):
             logger.info(str(e))
             raise
 
-dbClient=DBManager.DBManager()
-cur = dbClient.get_cursor()
-cnx=dbClient.get_connect()
-max_db_id=dbClient.get_max_id()
+db_client=db_manager.db_manager()
+cur = db_client.get_cursor()
+cnx=db_client.get_connect()
+max_db_id=db_client.get_max_id()
 # TODO move all sql into lib functions
 add_tweet = ("INSERT INTO doubi.Demo(id, text, followers_count, favorite_count, retweet_count,created_at) VALUES (%s, %s, %s, %s, %s, %s)")
 logger.info("Starting dump into mysql")
@@ -76,5 +78,5 @@ for status in limit_handled(tweepy.Cursor(api.search,
     except Exception as e:
         logger.info(str(e))
 
-dbClient.close()
+db_client.close()
 print("Crawler Done")

@@ -10,23 +10,21 @@ import html
 import datetime
 import sys
 import time
-sys.path.append('../lib') 
-import common_functions
-import mysql_connection
-import config_parser
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from util_libs import common_functions
+from util_libs import config_parser
 
 
 # Get configuration from configparser
-cfparser=config_parser.get_settings()
-mysql_user=cfparser.get('MYSQL', 'user')
-mysql_password=cfparser.get('MYSQL', 'password')
-mysql_host=cfparser.get('MYSQL', 'host')
-mysql_database=cfparser.get('MYSQL', 'database')
+cf_parser=config_parser.get_settings()
+mysql_user=cf_parser.get('MYSQL', 'user')
+mysql_password=cf_parser.get('MYSQL', 'password')
+mysql_host=cf_parser.get('MYSQL', 'host')
+mysql_database=cf_parser.get('MYSQL', 'database')
 
 nasdaq_url='https://www.nasdaq.com/symbol/%s/real-time'
-
-cnx = mysql_connection.get_connect(mysql_user,mysql_password,mysql_host,mysql_database)
-cur = mysql_connection.get_cursor(cnx)
 
 
 def get_real_stock_price():
@@ -67,12 +65,7 @@ def get_real_stock_price():
 #    print("%s price: %s volume: %s"%(current_time,price,volume-previous_volume))
     return price,volume
 
-
-# main method
-def main():  
-
-    price,volume = get_real_stock_price()
-    print(str(price)+str(volume))
+ 
+price,volume = get_real_stock_price()
+print(str(price)+" "+str(volume))
   
-if __name__ == "__main__":  
-    main()  
