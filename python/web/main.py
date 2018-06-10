@@ -5,26 +5,24 @@ __version__ = "0.1.0"
 # Class shows stock analyze on web
 import time
 import datetime
-import os.path  
+import os.path
 import tornado.httpserver  
 import tornado.web  
 import tornado.ioloop  
 import tornado.options  
-import mysql.connector
 import sys
-sys.path.append('../lib') 
-sys.path.append('../model/stockvariable') 
-import mysql_connection 
-import stock_info
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from util_libs import stock_info
 from tornado.options import define, options  
-import forecast_result
-import macd
-  
-define("port", default=8888, help="run port", type=int)  
-define("mysql_host", default="127.0.0.1", help="db host")  
-define("mysql_database", default="doubi", help="db name")  
-define("mysql_user", default="devUser", help="db user")  
-define("mysql_password", default="Doubi12#", help="db password")  
+from util_libs import forecast_result
+from model.stock_variable import macd
+
+define("port", default=8888, help="run port", type=int)
+define("mysql_host", default="127.0.0.1", help="db host")
+define("mysql_database", default="doubi", help="db name")
+define("mysql_user", default="devUser", help="db user")
+define("mysql_password", default="Doubi12#", help="db password")
   
 # setting web related folder 
 TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "templates")  
@@ -41,7 +39,7 @@ class Application(tornado.web.Application):
             static_path = STATIC_PATH,  
             debug = True  
         )  
-        self.db = mysql_connection.get_connect(options.mysql_user,options.mysql_password,options.mysql_host,options.mysql_database)
+        #self.db = mysql_connection.get_connect(options.mysql_user,options.mysql_password,options.mysql_host,options.mysql_database)
         tornado.web.Application.__init__(self, handlers, **settings)  
 
 # change the data to the price that could be read by the UI frame

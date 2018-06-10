@@ -1,25 +1,23 @@
 import sys
-sys.path.append('../lib')
-sys.path.append('../model/twitter')
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import mysql.connector
 from mysql.connector import errorcode
 from textblob import TextBlob
 import statistics
-import common_functions
-import configparser
-import TweetSentiment
+from util_libs import common_functions
+from util_libs import config_parser
+# TODO dn management should not call this ...
+from model.twitter import tweet_sentiment
 from datetime import date, datetime, time, timedelta
 
-class DBManager:
+class db_manager:
     # inistialized database
     def __init__(self):
-        configParser = configparser.ConfigParser()
-        configFilePath = r'../conf/setting.ini'
-        configParser.read(configFilePath)
-        usr = configParser.get('MYSQL', 'user')
-        pswd = configParser.get('MYSQL', 'password')
-        hst = configParser.get('MYSQL', 'host')
-        db = configParser.get('MYSQL', 'database')
+        cf_parser = config_parser.get_settings()
+        usr = cf_parser.get('MYSQL', 'user')
+        pswd = cf_parser.get('MYSQL', 'password')
+        hst = cf_parser.get('MYSQL', 'host')
+        db = cf_parser.get('MYSQL', 'database')
         try:
             self.cnx = mysql.connector.connect(user=usr, password=pswd,host=hst,database=db)
         except mysql.connector.Error as err:
@@ -72,7 +70,7 @@ class DBManager:
         weighted_median=statistics.median(tweet_weight_polarity)
         weight_mean=statistics.mean(tweet_weight_polarity)
         count = len(tweet_polarity)
-        result = TweetSentiment.TweetSentiment(median, mean,weighted_median,weight_mean,count, plain_count)
+        result = tweet_sentiment.tweet_sentiment(median, mean,weighted_median,weight_mean,count, plain_count)
         return result
 
     #get the count by some period like per 15 mintes,ignore_zero is the flag to ignore polarity 0.0 (1,1,15)

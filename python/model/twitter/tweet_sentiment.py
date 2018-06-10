@@ -1,4 +1,4 @@
-class TweetSentiment(object):
+class tweet_sentiment(object):
     def __init__(self, median, mean, count, plain_count):
         self.median = str(median)
         self.mean = str(mean)
