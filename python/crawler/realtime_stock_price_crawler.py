@@ -31,7 +31,7 @@ nasdaq_url='https://www.nasdaq.com/symbol/%s/real-time'
 def get_real_stock_price():
     now = datetime.datetime.now()
     today_930 = now.replace(hour=9, minute=30, second=0, microsecond=0)
-    today_400 = now.replace(hour=4, minute=0, second=0, microsecond=0)
+    today_1600 = now.replace(hour=16, minute=0, second=0, microsecond=0)
 
     current_minute = datetime.datetime.now().strftime("%H:%M")
     current_date = datetime.datetime.now().strftime("%Y%m%d")
@@ -70,9 +70,12 @@ def get_real_stock_price():
 #    print("%s price: %s volume: %s"%(current_minute,price,str(volume)))
 #    return price,volume
 
-    if (now>=today_930 and now<=today_400):
+    if (now>=today_930 and now<=today_1600):
+        if os.stat('../web/static/data/tesla_'+current_date+'.txt').st_size == 0:
+            with open('../web/static/data/tesla_' + current_date + '.txt', 'a') as the_file:
+                the_file.write('date	close' + '\n')
         with open('../web/static/data/tesla_'+current_date+'.txt', 'a') as the_file:
-            the_file.write(current_minute+','+str(price)+','+str(volume)+'\n')
+            the_file.write(current_minute+'\t'+str(price)+'\n')
 
 scheduler = BlockingScheduler()
 scheduler.add_job(get_real_stock_price, 'cron', day_of_week='mon-fri', hour='9-17', minute='0-59')

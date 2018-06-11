@@ -46,7 +46,6 @@ body,html{
 }
 
 #realtimeprice {
-  display:flex;
   border-style: dotted;
   border-width: 1px;
   align-items: center;

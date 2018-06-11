@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta http-equiv="refresh" content="20">
 <title>Stock Price Forecast</title>
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
@@ -10,6 +11,16 @@
 <script src="https://code.highcharts.com/modules/solid-gauge.js"></script>
 <link rel="stylesheet" href="{{static_url('css/style.css')}}">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+<!-- Additional files for the Highslide popup effect -->
+<script src="https://www.highcharts.com/media/com_demo/js/highslide-full.min.js"></script>
+<script src="https://www.highcharts.com/media/com_demo/js/highslide.config.js" charset="utf-8"></script>
+<link rel="stylesheet" type="text/css" href="https://www.highcharts.com/media/com_demo/css/highslide.css" />
 
 <script type="text/javascript">
 
@@ -129,6 +140,10 @@ $.getJSON('/static/data/tsla.json', function (data) {
 
 </script>
 
+
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+
 </head>
 <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -144,9 +159,11 @@ $.getJSON('/static/data/tsla.json', function (data) {
         </div>
       </div>
     </nav>
+    <div id="realtimeprice" >
+        <h2 id="stockDate" width="100%"></h2>
 
-    <div id="realtimeprice"></div>
-
+        <svg width="760" height="400"></svg>
+    </div>>
     <div id="candlestick"></div>
     <div id="forecastleft"></div>>
     <div id="forecastright">
@@ -168,7 +185,99 @@ $.getJSON('/static/data/tsla.json', function (data) {
         </table>
     </div>  
 
+<script>
 
+var svg = d3.select("svg"),
+    margin = {top: 20, right: 20, bottom: 30, left: 50},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom,
+    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var parseTime = d3.timeParse("%I:%M");
+var padding = { top: 30 , right: 30, bottom: 30, left: 30 };
+var x = d3.scaleTime()
+    .rangeRound([0, width]);
+
+var y = d3.scaleLinear()
+    .rangeRound([height, 0]);
+
+var line = d3.line()
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.close); });
+
+var today = new Date();
+if(today.getDay() == 6) today.setDate(today.getDate() - 1);
+if(today.getDay() == 0) today.setDate(today.getDate() - 2);
+
+var dd = today.getDate();
+var mm = today.getMonth()+1;
+
+if(dd<10) {
+    dd = '0'+dd
+}
+
+if(mm<10) {
+    mm = '0'+mm
+}
+var yyyy = today.getFullYear();
+today = yyyy+""+mm+""+dd;
+document.getElementById("stockDate").innerHTML = today;
+
+d3.tsv("/static/data/tesla_"+today+".txt", function(d) {
+  d.date = parseTime(d.date);
+  d.close = +d.close;
+  return d;
+}, function(error, data) {
+  if (error) throw error;
+
+  x.domain(d3.extent(data, function(d) { return d.date; }));
+  y.domain(d3.extent(data, function(d) { return d.close; }));
+
+  g.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x))
+    .select(".domain")
+      .remove();
+
+  g.append("g")
+      .call(d3.axisLeft(y))
+    .append("text")
+      .attr("fill", "#000")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", "0.71em")
+      .attr("text-anchor", "end")
+      .text("Price ($)");
+
+  g.append("path")
+      .datum(data)
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-linejoin", "round")
+      .attr("stroke-linecap", "round")
+      .attr("stroke-width", 1.5)
+      .attr("d", line);
+
+
+var text = svg.selectAll("text")
+                .data(data)          //绑定数据
+                .enter()                //获取enter部分
+                .append("text")         //添加text元素，使其与绑定数组的长度一致
+                .attr("fill","white")
+                .attr("font-size","14px")
+                .attr("text-anchor","middle")
+                .attr("x", function(d,i){
+                    return padding.left + x(i);
+                })
+                .attr("dx","1em")
+                .attr("dy","1em")
+                .text(function(d){
+                    return d;
+                });
+
+});
+
+</script>
 
 </body>
 </html>
