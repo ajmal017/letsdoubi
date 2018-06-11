@@ -16,6 +16,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from util_libs import common_functions
 from util_libs import config_parser
 
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 # Get configuration from configparser
 cf_parser=config_parser.get_settings()
@@ -28,6 +29,12 @@ nasdaq_url='https://www.nasdaq.com/symbol/%s/real-time'
 
 
 def get_real_stock_price():
+    now = datetime.datetime.now()
+    today_930 = now.replace(hour=9, minute=30, second=0, microsecond=0)
+    today_400 = now.replace(hour=4, minute=0, second=0, microsecond=0)
+
+    current_minute = datetime.datetime.now().strftime("%H:%M")
+    current_date = datetime.datetime.now().strftime("%Y%m%d")
 
     # Read nasdaq file
     f = urllib.request.urlopen(nasdaq_url%"TSLA").read()
@@ -35,8 +42,6 @@ def get_real_stock_price():
     # Change encoding
     encode_type = chardet.detect(f)  
     f = f.decode(encode_type['encoding'])
-
-    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Get price
     price_reg = r'quotes_content_left__LastSale.{1,50}</span>'
@@ -62,10 +67,13 @@ def get_real_stock_price():
             number_re = re.compile(number_reg,re.S)
             volume = int(re.findall(number_re,text)[0][1:-2].replace(",", ""))
 
-#    print("%s price: %s volume: %s"%(current_time,price,volume-previous_volume))
-    return price,volume
+#    print("%s price: %s volume: %s"%(current_minute,price,str(volume)))
+#    return price,volume
 
- 
-price,volume = get_real_stock_price()
-print(str(price)+" "+str(volume))
-  
+    if (now>=today_930 and now<=today_400):
+        with open('../web/static/data/tesla_'+current_date+'.txt', 'a') as the_file:
+            the_file.write(current_minute+','+str(price)+','+str(volume)+'\n')
+
+scheduler = BlockingScheduler()
+scheduler.add_job(get_real_stock_price, 'cron', day_of_week='mon-fri', hour='9-17', minute='0-59')
+scheduler.start()

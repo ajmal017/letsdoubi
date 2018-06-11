@@ -53,7 +53,7 @@ $.getJSON('/static/data/tsla.json', function (data) {
                         inputDateFormat: '%Y-%m-%d'
                 },
                 title: {
-                        text: 'Tesla Stock candlestick Chart'
+                        text: 'Tesla Stock Daily Candlestick Chart'
                 },
                 xAxis: {
                         dateTimeLabelFormats: {
@@ -144,9 +144,12 @@ $.getJSON('/static/data/tsla.json', function (data) {
         </div>
       </div>
     </nav>
-    <div id="candlestick"></div>
-    <div id="forecast">
 
+    <div id="realtimeprice"></div>
+
+    <div id="candlestick"></div>
+    <div id="forecastleft"></div>>
+    <div id="forecastright">
         <table style="width:100%">
           <tr>
             <th>Variable</th>
