@@ -1,4 +1,5 @@
 import sys
+import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import mysql.connector
 from mysql.connector import errorcode
@@ -75,10 +76,10 @@ class db_manager:
 
     #get the count by some period like per 15 mintes,ignore_zero is the flag to ignore polarity 0.0 (1,1,15)
     def get_count_by_period(self, ignore_zero, date, days_block, minutes_block):
-        add_twitterAnalysisByFifteenMin = ("INSERT INTO doubi.TeslaTwitterAnalysisByFifteenMin(date,yyyymm,day,quarters,median,mean,weighted_median,weighted_mean,count,zero_count) VALUES (%s, %s, %s, %s, %s, %s, %s , %s, %s, %s)")
+        add_twitterAnalysisByFifteenMin = ("INSERT INTO doubi.TeslaTwitterAnalysisBy"+common_functions.int_to_en(days_block)+"Day"+common_functions.int_to_en(minutes_block)+"Min(date,yyyymm,day,hour,quarters,median,mean,weighted_median,weighted_mean,count,zero_count) VALUES (%s, %s, %s, %s, %s, %s, %s, %s , %s, %s, %s)")
         begin_date = datetime(int(date.year), int(date.month), int(date.day), 0, 0)
         end_date = begin_date + timedelta(days=days_block)
-        # from 1 to 96
+        # from 1 to 4
         quarters = 0
         while begin_date < end_date:
             #initial list each loop
@@ -113,7 +114,7 @@ class db_manager:
                 weight_mean=statistics.mean(tweet_weight_polarity)
 
             count = len(tweet_polarity)
-            twitterAnalysis=(str(begin_date + timedelta(minutes=minutes_block)),(str( '%02d' % begin_date.year)+"-"+str( '%02d' % begin_date.month)),'%02d' % begin_date.day,(quarters%96+1),median,mean,weighted_median,weight_mean,count,zero_count)
+            twitterAnalysis=(str(begin_date + timedelta(minutes=minutes_block)-timedelta(seconds=1)),(str( '%02d' % begin_date.year)+"-"+str( '%02d' % begin_date.month)),'%02d' % begin_date.day,'%02d' % begin_date.hour,(quarters%4+1),median,mean,weighted_median,weight_mean,count,zero_count)
             self.cur.execute(add_twitterAnalysisByFifteenMin, twitterAnalysis)
             quarters+=1
             begin_date += timedelta(minutes=minutes_block)
