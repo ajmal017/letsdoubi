@@ -70,14 +70,15 @@ class MainHandler(tornado.web.RequestHandler):
             text_file.write(resultStr)
 
         # Get macd result
-        macd_result = macd.get_MACD(prices)
-        macd_flag = macd.get_macd_flag(round(macd_result.iloc[-1]['macd'],2))
-        macd_accuracy = macd.get_macd_accuracy(macd_result)
-        gain_chance = macd.get_macd_chance(macd_result)
-        data = forecast_result.make_result("MACD",macd_flag,macd_accuracy,gain_chance)      
+        #macd_result = macd.get_MACD(prices)
+        #macd_flag = macd.get_macd_flag(round(macd_result.iloc[-1]['macd'],2))
+        #macd_accuracy = macd.get_macd_accuracy(macd_result)
+        #gain_chance = macd.get_macd_chance(macd_result)
+        #data = forecast_result.make_result("MACD",macd_flag,macd_accuracy,gain_chance)
+        data = forecast_result.make_result("MACD", "TBD", "TBD", "TBD")
         datas.append(data)
 
-
+        print("refresh")
         self.render("index.html", datas=datas)
 
     def post(self):

@@ -45,6 +45,18 @@ body,html{
   width: 100%;
 }
 
+#realtimeprice {
+  border-style: dotted;
+  border-width: 1px;
+  align-items: center;
+  justify-content:center;
+  position: fixed;
+  left:1%;
+  top: 7%;
+  width: 48%;
+  height:60%;
+  font-size:2rem;
+}
 
 #candlestick {
   display:flex;
@@ -53,23 +65,37 @@ body,html{
   align-items: center;
   justify-content:center;
   position: fixed;
-  left:2%;
+  left:50%;
   top: 7%;
-  width: 60%;
+  right:1%;
+  width: 48%;
   height:60%;
   font-size:2rem;
 }
 
-#forecast {
+#forecastleft {
   display:flex;
   border-style: dotted;
   border-width: 1px;
   position: fixed;
-  left:64%;
-  top: 7%;
+  left:1%;
+  top: 68%;
   right:1%;
-  width: 34%;
-  height:60%;
+  width: 48%;
+  height:30%;
+  font-size:2rem;
+}
+
+#forecastright {
+  display:flex;
+  border-style: dotted;
+  border-width: 1px;
+  position: fixed;
+  left:50%;
+  top: 68%;
+  right:1%;
+  width: 48%;
+  height:30%;
   font-size:2rem;
 }
 
