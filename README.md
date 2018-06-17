@@ -39,47 +39,14 @@ Docker
 tornado
 TensorFlow
 
+0.1.0
+爬虫爬取每日twitter数据 - Done
+使用textblob进行感情分析 - Done
+股票显示日K线图 - Done
+股票显示当日分时图 - Done
+选择可以作为tensorflow的输入的参数 - In process
+Tensorflow分析结果并显示在页面上 - In process
+代码整理
+0.1.0总结和0.2.0计划
 
 
-
-Jun/5th:
-Sam:
-1. Create new table: Demo to Twitter**
-2. New mysql table. Twitter_analyze_info 
-(
-year+month,
-day,
-hr,
-15min(4 quarters),
-median,
-mean,
-weighted_median,
-weighted_mean,
-count,
-0_count
-)
-
-2018-06,05,09,1,mean...
-2018-06,05,09,2,mean...
-2018-06,05,09,3,mean...
-2018-06,05,09,4,mean...
-2018-06,05,10,1,mean...
-2018-06,05,10,2,mean...
-2018-06,05,10,3,mean...
-2018-06,05,10,4,mean...
-
->0 下一个15分钟涨 准确率
-
-(close+open+high+low)/4
-
-
-
-
-Kev:
-1. 股价15分钟api
-
-2. 股票价格存入数据库，建一张表
-
-3. 显示15分钟图
-
-Jun/7th
